@@ -15,9 +15,16 @@ public class Rain_Controller {
         this.service = service;
     }
 
+    // from nasa to output folder saven
     // GET /api/v1/rain/fetch?start=20250101&end=20250107&params=PRECTOTCORR,RH2M,T2M&longitude=15.44&latitude=47.38
     @GetMapping("/fetch")
     public String fetch(@RequestParam String start, @RequestParam String end, @RequestParam(defaultValue = "PRECTOTCORR,RH2M,T2M") String params, @RequestParam(defaultValue = "15.44") double longitude, @RequestParam(defaultValue = "47.38") double latitude) throws Exception {
         return service.fetchAndSave(start, end, params, longitude, latitude);
+    }
+
+    // von file to db readen
+    @GetMapping("/savetodb")
+    public String saveToDb(@RequestParam String fileName) throws Exception {
+        return service.saveFile(fileName);
     }
 }
