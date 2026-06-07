@@ -1,2 +1,5 @@
-### get test
-GET http://localhost:8080/api/v1/rain/fetch?start=20250101&end=20250107
+### get data from nasa to file
+GET http://localhost:8080/api/v1/rain/fetch?start=20250105&end=20250107
+
+### data from file to db
+GET http://localhost:8080/api/v1/rain/savetodb?fileName=rain_20250105_20250107_lat47.38_lon15.44.json
