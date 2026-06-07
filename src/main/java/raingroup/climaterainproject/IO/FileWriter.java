@@ -15,7 +15,7 @@ public class FileWriter {
             outputDir.mkdirs();
         }
 
-        // objectmapper
+        // object mapper
         Object json = objectMapper.readValue(jsonResponse, Object.class);
         String prettyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
 
