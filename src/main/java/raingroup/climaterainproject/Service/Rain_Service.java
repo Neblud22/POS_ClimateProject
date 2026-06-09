@@ -1,6 +1,5 @@
 package raingroup.climaterainproject.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import raingroup.climaterainproject.Dto.ClimateDataInputDTO;
@@ -8,8 +7,16 @@ import raingroup.climaterainproject.Dto.NasaResponse;
 import raingroup.climaterainproject.IO.FileReader;
 import raingroup.climaterainproject.IO.FileWriter;
 import raingroup.climaterainproject.IO.Parameter;
-import raingroup.climaterainproject.Pojo.ClimateData;
-import raingroup.climaterainproject.Repository.ClimateData_Repository;
+import raingroup.climaterainproject.Pojo.Humidity;
+import raingroup.climaterainproject.Pojo.Rain;
+import raingroup.climaterainproject.Pojo.Temperature;
+import raingroup.climaterainproject.Pojo.Wind;
+import raingroup.climaterainproject.Repository.Humidity_Repository;
+import raingroup.climaterainproject.Repository.Rain_Repository;
+import raingroup.climaterainproject.Repository.Temp_Repository;
+import raingroup.climaterainproject.Repository.Wind_Repository;
+
+import java.util.Map;
 
 @Service
 public class Rain_Service {
@@ -17,15 +24,19 @@ public class Rain_Service {
     private final RestClient restClient;
     private final FileWriter fileWriter;
     private final FileReader fileReader;
-    private final ClimateData_Repository repository;
-    private final ObjectMapper objectMapper;
+    private final Rain_Repository rainRepository;
+    private final Temp_Repository temperatureRepository;
+    private final Humidity_Repository humidityRepository;
+    private final Wind_Repository windRepository;
 
-    public Rain_Service(ClimateData_Repository repository) {
+    public Rain_Service(Rain_Repository rainRepository, Temp_Repository temperatureRepository, Humidity_Repository humidityRepository, Wind_Repository windRepository) {
         this.restClient = RestClient.create("https://power.larc.nasa.gov");
         this.fileWriter = new raingroup.climaterainproject.IO.FileWriter();
         this.fileReader = new FileReader();
-        this.repository = repository;
-        this.objectMapper = new ObjectMapper();
+        this.rainRepository = rainRepository;
+        this.temperatureRepository = temperatureRepository;
+        this.humidityRepository = humidityRepository;
+        this.windRepository = windRepository;
     }
 
     public String fetchAndSave(String start, String end, String params, double longitude, double latitude) throws Exception {
@@ -50,17 +61,57 @@ public class Rain_Service {
         // CONVERT -> ClimateDataInputDTO (only the fields we want)
         ClimateDataInputDTO dto = nasaResponse.toInputDTO();
 
+        // lon & lat
+        double lon = dto.getLongitude();
+        double lat = dto.getLatitude();
+
+        Map<String, Map<String, Double>> measurements = dto.getMeasurements();
+
         // MAP DTO -> ClimateData Entity
-        ClimateData row = new ClimateData();
-        row.setStartdate(dto.getStartdate());
-        row.setEnddate(dto.getEnddate());
-        row.setLongitude(dto.getLongitude());
-        row.setLatitude(dto.getLatitude());
-        row.setMeasurements(dto.getMeasurements());
-        row.setMeasurementInfo(dto.getMeasurementInfo());
+        if (measurements.containsKey("PRECTOTCORR")) {
+            measurements.get("PRECTOTCORR").forEach((date, value) -> {
+                Rain row = new Rain();
+                row.setDate(date);
+                row.setLongitude(lon);
+                row.setLatitude(lat);
+                row.setValue(value);
+                rainRepository.save(row);
+            });
+        }
 
-        repository.save(row);
+        if (measurements.containsKey("T2M")) {
+            measurements.get("T2M").forEach((date, value) -> {
+                Temperature row = new Temperature();
+                row.setDate(date);
+                row.setLongitude(lon);
+                row.setLatitude(lat);
+                row.setValue(value);
+                temperatureRepository.save(row);
+            });
+        }
 
-        return "Inserted into DB with id: " + row.getId();
+        if (measurements.containsKey("RH2M")) {
+            measurements.get("RH2M").forEach((date, value) -> {
+                Humidity row = new Humidity();
+                row.setDate(date);
+                row.setLongitude(lon);
+                row.setLatitude(lat);
+                row.setValue(value);
+                humidityRepository.save(row);
+            });
+        }
+
+        if (measurements.containsKey("WS2M")) {
+            measurements.get("WS2M").forEach((date, value) -> {
+                Wind row = new Wind();
+                row.setDate(date);
+                row.setLongitude(lon);
+                row.setLatitude(lat);
+                row.setValue(value);
+                windRepository.save(row);
+            });
+        }
+
+        return "Inserted " + measurements.get("PRECTOTCORR").size() + " days into all tables";
     }
 }
