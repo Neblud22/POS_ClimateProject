@@ -11,9 +11,9 @@ public class ClimateDataInputDTO {
     private double longitude;
     private double latitude;
 
-    // { "PRECTOTCORR": { "20250101": 0.0}, "RH2M": {}, "T2M": {} }
+    // PRECTOTCORR: "20250101": , "RH2M":, "T2M":
     private Map<String, Map<String, Double>> measurements;
 
-    // { "PRECTOTCORR": { "units": "mm/day", "longname": "Precipitation Corrected" }, ... }
+    // PRECTOTCORR: { "units": "mm/day", "longname": "Precipitation Corrected"
     private Map<String, Map<String, String>> measurementInfo;
 }
