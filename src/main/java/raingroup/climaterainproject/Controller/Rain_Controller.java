@@ -1,9 +1,11 @@
 package raingroup.climaterainproject.Controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import raingroup.climaterainproject.Dto.DailyDataDto;
 import raingroup.climaterainproject.Pojo.Humidity;
 import raingroup.climaterainproject.Pojo.Rain;
 import raingroup.climaterainproject.Pojo.Temperature;
@@ -48,26 +50,40 @@ public class Rain_Controller {
     }
 
     // endpoints für GET pro Tag pro parameter
+    // GET /api/v1/rain/data/rain?date=20250105
     @GetMapping("/rain")
-    public List<Rain> getRain(@RequestParam String date) {
-        return rainRepository.findByDate(date);
+    public ResponseEntity<List<Rain>> getRain(@RequestParam String date) {
+        return ResponseEntity.ok(rainRepository.findByDate(date));
     }
 
     // GET /api/v1/rain/data/temperature?date=20250105
     @GetMapping("/temperature")
-    public List<Temperature> getTemperature(@RequestParam String date) {
-        return temperatureRepository.findByDate(date);
+    public ResponseEntity<List<Temperature>> getTemperature(@RequestParam String date) {
+        return ResponseEntity.ok(temperatureRepository.findByDate(date));
     }
 
     // GET /api/v1/rain/data/humidity?date=20250105
     @GetMapping("/humidity")
-    public List<Humidity> getHumidity(@RequestParam String date) {
-        return humidityRepository.findByDate(date);
+    public ResponseEntity<List<Humidity>> getHumidity(@RequestParam String date) {
+        return ResponseEntity.ok(humidityRepository.findByDate(date));
     }
 
     // GET /api/v1/rain/data/wind?date=20250105
     @GetMapping("/wind")
-    public List<Wind> getWind(@RequestParam String date) {
-        return windRepository.findByDate(date);
+    public ResponseEntity<List<Wind>> getWind(@RequestParam String date) {
+        return ResponseEntity.ok(windRepository.findByDate(date));
+    }
+
+    // per day all params
+    @GetMapping("/day")
+    public ResponseEntity<DailyDataDto> getDailyData(@RequestParam String date) {
+
+        DailyDataDto data = service.getDailyData(date);
+
+        if (data.getRain() == null && data.getTemperature() == null && data.getHumidity() == null && data.getWind() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(data);
     }
 }
