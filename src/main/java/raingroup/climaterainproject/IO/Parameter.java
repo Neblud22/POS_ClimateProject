@@ -26,7 +26,6 @@ public class Parameter {
 
     // filename with params
     public String toFileName() {
-        return "output/rain_" + start + "_" + end
-                + "_lat" + latitude + "_lon" + longitude + ".json";
+        return "output/rain_" + start + "_" + end + "_lat" + latitude + "_lon" + longitude + ".json";
     }
 }
