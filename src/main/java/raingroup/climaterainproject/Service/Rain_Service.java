@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import raingroup.climaterainproject.Dto.ClimateDataInputDTO;
+import raingroup.climaterainproject.Dto.DailyDataDto;
 import raingroup.climaterainproject.Dto.NasaResponse;
 import raingroup.climaterainproject.IO.FileReader;
 import raingroup.climaterainproject.IO.FileWriter;
@@ -17,6 +18,7 @@ import raingroup.climaterainproject.Repository.Rain_Repository;
 import raingroup.climaterainproject.Repository.Temp_Repository;
 import raingroup.climaterainproject.Repository.Wind_Repository;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -119,5 +121,20 @@ public class Rain_Service {
         }
 
         return "Inserted " + measurements.get("PRECTOTCORR").size() + " days into all tables";
+    }
+
+    public DailyDataDto getDailyData(String date) {
+        List<Rain> rain = rainRepository.findByDate(date);
+        List<Temperature> temperature = temperatureRepository.findByDate(date);
+        List<Humidity> humidity = humidityRepository.findByDate(date);
+        List<Wind> wind = windRepository.findByDate(date);
+
+        return DailyDataDto.builder()
+                .date(date)
+                .rain(rain.isEmpty() ? null : rain.get(0).getValue())
+                .temperature(temperature.isEmpty() ? null : temperature.get(0).getValue())
+                .humidity(humidity.isEmpty() ? null : humidity.get(0).getValue())
+                .wind(wind.isEmpty() ? null : wind.get(0).getValue())
+                .build();
     }
 }
