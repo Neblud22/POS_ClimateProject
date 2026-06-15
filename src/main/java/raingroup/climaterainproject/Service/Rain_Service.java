@@ -1,6 +1,7 @@
 package raingroup.climaterainproject.Service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import raingroup.climaterainproject.Dto.ClimateDataInputDTO;
 import raingroup.climaterainproject.Dto.NasaResponse;
@@ -55,6 +56,7 @@ public class Rain_Service {
         return "Saved file: " + parameter.toFileName();
     }
 
+    @Transactional
     public String saveFile(String fileName) throws Exception {
         NasaResponse nasaResponse = fileReader.read(fileName);
 
