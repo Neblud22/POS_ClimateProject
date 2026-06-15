@@ -70,44 +70,48 @@ public class Rain_Service {
         // MAP DTO -> ClimateData Entity
         if (measurements.containsKey("PRECTOTCORR")) {
             measurements.get("PRECTOTCORR").forEach((date, value) -> {
-                Rain row = new Rain();
-                row.setDate(date);
-                row.setLongitude(lon);
-                row.setLatitude(lat);
-                row.setValue(value);
+                Rain row = Rain.builder()
+                        .date(date)
+                        .longitude(lon)
+                        .latitude(lat)
+                        .value(value)
+                        .build();
                 rainRepository.save(row);
             });
         }
 
         if (measurements.containsKey("T2M")) {
             measurements.get("T2M").forEach((date, value) -> {
-                Temperature row = new Temperature();
-                row.setDate(date);
-                row.setLongitude(lon);
-                row.setLatitude(lat);
-                row.setValue(value);
+                Temperature row = Temperature.builder()
+                        .date(date)
+                        .longitude(lon)
+                        .latitude(lat)
+                        .value(value)
+                        .build();
                 temperatureRepository.save(row);
             });
         }
 
         if (measurements.containsKey("RH2M")) {
             measurements.get("RH2M").forEach((date, value) -> {
-                Humidity row = new Humidity();
-                row.setDate(date);
-                row.setLongitude(lon);
-                row.setLatitude(lat);
-                row.setValue(value);
+                Humidity row = Humidity.builder()
+                        .date(date)
+                        .longitude(lon)
+                        .latitude(lat)
+                        .value(value)
+                        .build();
                 humidityRepository.save(row);
             });
         }
 
         if (measurements.containsKey("WS2M")) {
             measurements.get("WS2M").forEach((date, value) -> {
-                Wind row = new Wind();
-                row.setDate(date);
-                row.setLongitude(lon);
-                row.setLatitude(lat);
-                row.setValue(value);
+                Wind row = Wind.builder()
+                        .date(date)
+                        .longitude(lon)
+                        .latitude(lat)
+                        .value(value)
+                        .build();
                 windRepository.save(row);
             });
         }
