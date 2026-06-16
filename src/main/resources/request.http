@@ -1,5 +1,17 @@
 ### get data from nasa to file
-GET http://localhost:8080/api/v1/rain/fetch?start=20200101&end=20260101
+GET http://localhost:8080/api/v1/rain/fetch?start=20050101&end=20260101
 
 ### data from file to db
-GET http://localhost:8080/api/v1/rain/savetodb?fileName=rain_20250105_20250107_lat47.38_lon15.44.json
+GET http://localhost:8080/api/v1/rain/savetodb?fileName=rain_20050101_20260101_lat47.38_lon15.44.json
+
+### endpoints for each parameter on its own - for a single day
+### rain
+GET http://localhost:8080/api/v1/rain/rain?date=20200101
+### humidity
+GET http://localhost:8080/api/v1/rain/humidity?date=20050106
+### temp
+GET http://localhost:8080/api/v1/rain/temperature?date=20050106
+### wind
+GET http://localhost:8080/api/v1/rain/wind?date=20050106
+
+### endpoint: get all params for a specific day
